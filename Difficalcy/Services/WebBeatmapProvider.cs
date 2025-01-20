@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace Difficalcy.Services
             var beatmapPath = GetBeatmapPath(beatmapId);
             if (!File.Exists(beatmapPath))
             {
-                if (_downloadMissingBeatmaps != "true")
+                if (!_downloadMissingBeatmaps.Equals("true", StringComparison.OrdinalIgnoreCase))
                 {
                     logger.LogWarning(
                         "Beatmap {BeatmapId} not found and downloading is disabled",
@@ -55,6 +56,8 @@ namespace Difficalcy.Services
                     throw new BeatmapNotFoundException(beatmapId);
                 }
 
+                var dir = Path.GetDirectoryName(beatmapPath);
+                if (dir != null) Directory.CreateDirectory(dir);
                 using var fs = new FileStream(beatmapPath, FileMode.CreateNew);
                 await response.Content.CopyToAsync(fs);
                 if (fs.Length == 0)

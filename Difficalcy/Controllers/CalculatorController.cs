@@ -40,6 +40,22 @@ namespace Difficalcy.Controllers
         /// <summary>
         /// Returns difficulty and performance values for a score.
         /// </summary>
+        [HttpPost("calculation")]
+        public async Task<ActionResult<TCalculation>> PostGetCalculation([FromBody] TScore score)
+        {
+            try
+            {
+                return Ok(await calculatorService.GetCalculation(score));
+            }
+            catch (BeatmapNotFoundException e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+        }
+
+        /// <summary>
+        /// Returns difficulty and performance values for a score.
+        /// </summary>
         [HttpGet("calculation")]
         public async Task<ActionResult<TCalculation>> GetCalculation([FromQuery] TScore score)
         {
